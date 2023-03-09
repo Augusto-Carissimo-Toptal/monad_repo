@@ -8,7 +8,7 @@ require "rspec/autorun"
 
 class Box
   attr_reader :value
-  
+
   def initialize(value)
     @value = value
   end
@@ -39,11 +39,16 @@ end
 
 RSpec.describe "inline Bundler and autorun RSpec" do
   it "" do
-    meth = ->(value) do 
+    meth = ->(value) do
       Box.return(value + 1)
     end
 
     expect(meth.call(1)).to eq(Box.return(1).bind(&meth))
+  end
+
+  it '' do
+    box = Box.return(1)
+    expect(box.bind(&Box.method(:return))).to eq(box)
   end
 end
 
