@@ -50,5 +50,12 @@ RSpec.describe "inline Bundler and autorun RSpec" do
     box = Box.return(1)
     expect(box.bind(&Box.method(:return))).to eq(box)
   end
+
+  it '' do
+    meth_one = ->(value) { Box.return(value * 2) }
+    meth_two = ->(value) { Box.return(value ** 2) }
+    box = Box.return(rand(1000))
+    expect(box.bind(&meth_one).bind(&meth_two)).to eq(box.bind { |val| meth_one.call(val).bind(&meth_two) })
+  end
 end
 
