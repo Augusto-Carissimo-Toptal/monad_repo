@@ -8,4 +8,13 @@ class Box
   def self.return(arg)
     new(arg)
   end
+
+  def bind(&block)
+    result = block.call(value)
+    if result.is_a?(Box)
+      result
+    else
+      raise 'Is not a Box'
+    end
+  end
 end
