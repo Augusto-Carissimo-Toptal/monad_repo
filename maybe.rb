@@ -22,17 +22,26 @@ class Maybe
   end
 
   def bind(&block)
-    block.call(@value).tap do |new_monad|
-      raise 'return value of Maybe#bind is not a Monad' unless new_monad.is_a?(Maybe)
+    if @value
+      block.call(@value).tap do |new_monad|
+        raise 'return value of Maybe#bind is not a Monad' unless new_monad.is_a?(Maybe)
+      end
+    else
+      self
     end
   rescue
+    p "Failed at block #{block.source_location}"
     Maybe.return(nil)
   end
 
   def map(&block)
-    block.call(@value).tap { |new_value| return new(new_value) }
-    rescue
-      return new(nil)
+    if @value
+      block.call(@value).tap { |new_value| return new(new_value) }
+    else
+      self
+    end
+  rescue
+    return new(nil)
   end
 
   def ==(other)
@@ -74,6 +83,11 @@ RSpec.describe "inline Bundler and autorun RSpec" do
  
       expect(Maybe.return('string').bind(&meth).value).to eq(nil)
     end
+
+    it '' do
+      
+    end
   end
 end
 
+# Monad.return(1).method1.method2.method3.method4.method5
